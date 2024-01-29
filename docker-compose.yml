@@ -7,6 +7,8 @@ services:
     volumes:
       - ./Local_data:/app/Local_Data/Product
       - ./Delta_Table:/app/Delta_Table
+      - ./spark_history_logs:/app/spark_history_logs
+
     environment:
       - SPARK_MASTER=local[*]
 
@@ -22,3 +24,6 @@ services:
       - "org.apache.spark.deploy.history.HistoryServer"
     volumes:
       - ./spark_history_logs:/app/spark_history_logs
+    environment:
+      - SPARK_NO_DAEMONIZE=true
+      - SPARK_HISTORY_OPTS=-Dspark.history.fs.logDirectory=/app/spark_history_logs -Dspark.history.ui.port=18080 -Dspark.history.retainedApplications=50 -Dspark.ui.retainedJobs=50 -Dspark.ui.retainedStages=50 -Dspark.ui.retainedTasks=50 -Dspark.worker.ui.retainedExecutors=50 -Dspark.worker.ui.retainedDrivers=50 -Dspark.sql.ui.retainedExecutions=50 -Dspark.streaming.ui.retainedBatches=50 -Dspark.history.ui.showIncomplete=true
