@@ -20,3 +20,27 @@ This project is a Spark job that ingests one or multiple CSV files into DeltaLak
 ```bash
 docker-compose up -d
 ```
+
+## Deployment Diagram:
+![Alt text](image.png)
+
+
+
+1. Spark Job Pod:
+
+- Contains the Spark Job container with PySpark and DeltaLake dependencies.
+- Executes the Spark Job to ingest and transform data.
+- Adds extra columns to the DataFrame.
+- Writes data to DeltaLake in APPEND mode.
+
+2. Spark History Server:
+
+- Runs in its own container alongside the Spark Job.
+- Monitors and serves historical Spark application data, logs, and traces.
+- Uses the specified image and command for configuration.
+
+3. DeltaLake Storage:
+
+- Represents the storage backend for DeltaLake.
+- Could be a cloud-based storage service (Amazon S3) or local storage.
+- Stores the ingested and transformed data.
