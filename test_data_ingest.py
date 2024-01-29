@@ -1,4 +1,4 @@
-import tempfile
+import shutil
 import pytest
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
@@ -23,26 +23,26 @@ def spark(master = "local[*]"):
 
 
 # Test case
+
+
 def test_ingest_csv_to_delta(spark):
     
     csv_path_test = "test.csv"  
     delta_table_path_test = "Delta_Table_test"  
 
-   
-    test_data = [(1, "2024-01-29 01:36:19", "3b6db6bd-b353-410e-975a-3e4c3e4e4e3e")]
-    expected_df = spark.createDataFrame(test_data, ["column1", "ingestion_tms", "batch_id"])
+    try:
+        test_data = [(1, "2024-01-29 01:36:19", "3b6db6bd-b353-410e-975a-3e4c3e4e4e3e")]
+        expected_df = spark.createDataFrame(test_data, ["column1", "ingestion_tms", "batch_id"])
+        ingest_csv_to_delta(spark, csv_path_test, delta_table_path_test)
 
-    # Act
-    ingest_csv_to_delta(spark, csv_path_test, delta_table_path_test)
-
-    # Assert
-    actual_df = spark.read.format("delta").load(delta_table_path_test)
-    
-   
-    assert  actual_df.count() == 1
-
-   
-    assert "ingestion_tms" in actual_df.columns
-    assert "batch_id" in actual_df.columns
-
-   
+        # Assert
+        actual_df = spark.read.format("delta").load(delta_table_path_test)
+        
+        assert "ingestion_tms" in actual_df.columns
+        assert "batch_id" in actual_df.columns
+        assert actual_df.count() == 1 
+        assert expected_df.count() == 1
+        assert actual_df.columns == expected_df.columns
+    finally:
+        # Cleanup: Delete files after the test
+        shutil.rmtree(delta_table_path_test, ignore_errors=True)
