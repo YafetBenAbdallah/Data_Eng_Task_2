@@ -1,4 +1,4 @@
-Sure, here's a basic example of a README.md file for your project:
+
 
 ```markdown
 # Data Engineer Task 2
@@ -18,5 +18,5 @@ This project is a Spark job that ingests one or multiple CSV files into DeltaLak
 3. Run the Docker Compose file to start the Spark job and the Spark History Server:
 
 ```bash
-docker-compose up
+docker-compose up -d
 ```
