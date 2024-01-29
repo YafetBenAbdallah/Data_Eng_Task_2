@@ -1,0 +1,23 @@
+version: "3"
+services:
+  spark-job:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./Local_data:/app/Local_data/Product  # Mount the Local_Data directory into the container
+      - ./Delta_Table:/app/Delta_Table  # Mount the Delta_Table directory into the container
+    environment:
+      - SPARK_MASTER=local[*]  # Set Spark master URL
+
+  spark-history-server:
+    image: gcr.io/spark-operator/spark:v3.5.0
+    command: 
+      - "/sbin/tini"
+      - "-s"
+      - "--"
+      - "/opt/spark/bin/spark-class"
+      - "-Dspark.history.fs.logDirectory=/app/spark_history_logs"
+      - "org.apache.spark.deploy.history.HistoryServer"
+    volumes:
+      - ./spark_history_logs:/app/spark_history_logs
